@@ -9,12 +9,10 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import IconButton from '@mui/material/IconButton';
 import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import FormHelperText from '@mui/material/FormHelperText';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useDispatch } from 'react-redux';
+import {login} from '../redux/actions/authActions'
+
 
 export function FormUtils() {
     const style = {
@@ -32,6 +30,26 @@ export function FormUtils() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [showPassword, setShowPassword] = React.useState(false); 
+    const [data, setData] = React.useState({
+      firstName:'',
+      lastName:'',
+      email:'',
+      password:''
+    })
+    const dispatch=useDispatch()
+    const handleChange=(e)=>{
+      const{name,value}=e.target
+      setData(prevData=>({
+        ...prevData,
+        [name]:value
+      }))
+    }
+    const handleSubmit=(e)=>{
+      e.preventDefault()
+      handleClose()
+      console.log("submitted")
+      dispatch(login(data))
+    }
     
     return (
     <div>
@@ -40,16 +58,22 @@ export function FormUtils() {
             open={open}
             onClose={handleClose}
         >
-            <Box sx={style} component="form" noValidate autoComplete='on' className='flex flex-col gap-5'>
+            <Box sx={style} component="form" noValidate autoComplete='on' onSubmit={handleSubmit} className='flex flex-col gap-5'>
             <div className='flex gap-2'>
                 <TextField
                 required
                 id="outlined-error"
                 label="First Name"
+                name='firstName'
+                value={data.firstName}
+                onChange={handleChange}
                 />
                 <TextField
                 id="outlined-error-helper-text"
                 label="Last Name"
+                name='lastName'
+                value={data.lastName}
+                onChange={handleChange}
                 />
             </div>
             <div className='flex flex-col gap-5'>
@@ -57,16 +81,22 @@ export function FormUtils() {
                 required
                 id="email"
                 label="Email"
+                name='email'
+                value={data.email}
+                onChange={handleChange}
                 />
                 <FormControl sx={{width: 'full' }} variant="filled">
                     <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
                     <FilledInput
                         id="filled-adornment-password"
                         type={showPassword ? 'text' : 'password'}
+                        name='password'
+                        value={data.password}
+                        onChange={handleChange}
                     />
                 </FormControl>
             </div>
-            <Button variant="contained" onClick={handleClose}>Submit</Button>
+            <Button variant="contained" type='submit'>Submit</Button>
         </Box>
       </Modal>
     </div>
